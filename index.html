@@ -66,13 +66,16 @@
         /* 목록 컨테이너 스타일 */
         #list {
             padding: 0 20px 20px 20px;
+            /* ❗ 새로 추가된 스크롤 및 높이 제한 스타일 ❗ */
+            max-height: 450px; /* 목록이 보일 최대 높이 (원하는 값으로 수정 가능) */
+            overflow-y: auto;   /* 높이를 넘어가면 세로 스크롤 생성 */
         }
 
-        /* 테이블 스타일 */
+        /* 테이블 스타일 (기존과 동일) */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 0; /* 목록 개수 표시를 위해 0으로 변경 */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             border-radius: 8px;
             overflow: hidden;
@@ -99,6 +102,17 @@
             width: 25%;
             font-weight: bold;
             color: #e91e63;
+        }
+
+        /* 총 개수 표시 스타일 */
+        #total-count {
+            text-align: center;
+            padding: 15px 20px;
+            background-color: #ffcdd2; /* 연한 분홍색 배경 */
+            color: #e91e63; /* 찐한 분홍색 글씨 */
+            font-weight: bold;
+            border-top: 5px solid #e91e63;
+            font-size: 18px;
         }
 
         /* 숨김 처리된 아이템 */
@@ -180,7 +194,6 @@
                     <tr class="item"><td class="number-col">243</td><td>테디베어</td></tr>
                     <tr class="item"><td class="number-col">248</td><td>나랑사귈래</td></tr>
                     <tr class="item"><td class="number-col">252</td><td>라라리라라</td></tr>
-
                     <tr class="item"><td class="number-col">256</td><td>오빠바이러스</td></tr>
                     <tr class="item"><td class="number-col">257</td><td>이루리</td></tr>
                     <tr class="item"><td class="number-col">258</td><td>묵찌빠</td></tr>
@@ -243,7 +256,6 @@
                     <tr class="item"><td class="number-col">874</td><td>슈퍼소닉</td></tr>
                     <tr class="item"><td class="number-col">888</td><td>피리</td></tr>
                     <tr class="item"><td class="number-col">999</td><td>약속해</td></tr>
-
                     <tr class="item"><td class="number-col">1000</td><td>웰컴투씨나인</td></tr>
                     <tr class="item"><td class="number-col">1001</td><td>힛더로드잭</td></tr>
                     <tr class="item"><td class="number-col">1002</td><td>봉다리#</td></tr>
@@ -323,7 +335,6 @@
                     <tr class="item"><td class="number-col">1096</td><td>인생뭐있어?</td></tr>
                     <tr class="item"><td class="number-col">1097</td><td>큰코인러형규</td></tr>
                     <tr class="item"><td class="number-col">1099</td><td>람보르기니</td></tr>
-
                     <tr class="item"><td class="number-col">1101</td><td>은유화1</td></tr>
                     <tr class="item"><td class="number-col">1102</td><td>강남일개미</td></tr>
                     <tr class="item"><td class="number-col">1103</td><td>어림없지</td></tr>
@@ -389,7 +400,6 @@
                     <tr class="item"><td class="number-col">1787</td><td>취팔놈아</td></tr>
                     <tr class="item"><td class="number-col">1888</td><td>작은예멘</td></tr>
                     <tr class="item"><td class="number-col">1999</td><td>조로</td></tr>
-
                     <tr class="item"><td class="number-col">2000</td><td>웃기긴하네</td></tr>
                     <tr class="item"><td class="number-col">2009</td><td>왈왈단결</td></tr>
                     <tr class="item"><td class="number-col">2020</td><td>큰호구모오</td></tr>
@@ -407,7 +417,6 @@
                     <tr class="item"><td class="number-col">2252</td><td>큰오승환</td></tr>
                     <tr class="item"><td class="number-col">2258</td><td>큰앙드로</td></tr>
                     <tr class="item"><td class="number-col">2272</td><td>슈퍼까멘</td></tr>
-                    
                     <tr class="item"><td class="number-col">2442</td><td>큰라네트</td></tr>
                     <tr class="item"><td class="number-col">2444</td><td>큰세멘</td></tr>
                     <tr class="item"><td class="number-col">2486</td><td>로맨스v12멜로디</td></tr>
@@ -429,7 +438,6 @@
                     <tr class="item"><td class="number-col">10000</td><td>10만</td></tr>
                     <tr class="item"><td class="number-col">20000</td><td>20만</td></tr>
                     <tr class="item"><td class="number-col">30000</td><td>30만</td></tr>
-                    
                     <tr class="item"><td class="number-col">1003</td><td>후헌부</td></tr>
                     <tr class="item"><td class="number-col">1057</td><td>렉스</td></tr>
                     <tr class="item"><td class="number-col">1100</td><td>심양</td></tr>
@@ -438,13 +446,33 @@
                 </tbody>
             </table>
         </div>
+
+        <div id="total-count"></div>
     </div>
 
     <script>
         const search = document.getElementById('search');
-        // 검색 대상을 tr.item으로 지정
         const items = document.querySelectorAll('tr.item');
+        const totalCountDisplay = document.getElementById('total-count');
 
+        // 함수: 현재 목록의 개수를 세고 표시합니다.
+        function updateCount() {
+            // 보이는(hidden 클래스가 없는) 아이템만 필터링하여 개수를 셉니다.
+            const visibleItems = Array.from(items).filter(item => !item.classList.contains('hidden'));
+            
+            // 전체 아이템 개수를 가져옵니다.
+            const totalItems = items.length;
+
+            if (visibleItems.length === totalItems) {
+                // 검색 결과와 전체 개수가 같을 경우 (검색 안 했을 때)
+                totalCountDisplay.textContent = `총 시그니처 개수: ${totalItems}개`;
+            } else {
+                // 검색 중일 경우
+                totalCountDisplay.textContent = `검색 결과: ${visibleItems.length}개 / 전체: ${totalItems}개`;
+            }
+        }
+
+        // 검색 이벤트 리스너 (기존 코드 수정)
         search.addEventListener('input', () => {
             const q = search.value.toLowerCase();
             items.forEach(item => {
@@ -455,7 +483,12 @@
                     item.classList.add('hidden');
                 }
             });
+            // 검색 후 개수 업데이트
+            updateCount();
         });
+
+        // 페이지 로드 시 초기 개수 업데이트
+        updateCount();
     </script>
 </body>
 </html>
