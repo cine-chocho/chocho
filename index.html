@@ -19,7 +19,7 @@
             max-width: 650px;
             margin: 0 auto;
             background: #ffffff;
-            min-height: 100vh;
+            /* ❗ min-height: 100vh; 삭제됨 ❗ */
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
         }
 
@@ -65,8 +65,8 @@
 
         /* 목록 컨테이너 스타일 */
         #list {
-            padding: 0 20px 20px 20px;
-            /* ❗ 새로 추가된 스크롤 및 높이 제한 스타일 ❗ */
+            /* ❗ 하단 패딩 0으로 수정 ❗ */
+            padding: 0 20px 0 20px;
             max-height: 450px; /* 목록이 보일 최대 높이 (원하는 값으로 수정 가능) */
             overflow-y: auto;   /* 높이를 넘어가면 세로 스크롤 생성 */
         }
@@ -75,7 +75,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 0; /* 목록 개수 표시를 위해 0으로 변경 */
+            margin-bottom: 0; 
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
             border-radius: 8px;
             overflow: hidden;
@@ -113,6 +113,8 @@
             font-weight: bold;
             border-top: 5px solid #e91e63;
             font-size: 18px;
+            /* ❗ 마진을 0으로 설정하여 아래에 공간이 생기는 것을 막습니다. ❗ */
+            margin: 0; 
         }
 
         /* 숨김 처리된 아이템 */
