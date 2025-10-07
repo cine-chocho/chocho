@@ -147,7 +147,11 @@
     </div>
 
     <script>
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
+        // ❗ 캐시 방지 코드가 적용된 URL ❗
+        // 매번 현재 시간을 쿼리 매개변수로 추가하여 항상 최신 데이터를 요청합니다.
+        const BASE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
+        const CSV_URL = BASE_CSV_URL + '&t=' + new Date().getTime();
+
         const searchInput = document.getElementById('search');
         const tbody = document.getElementById('data-list-body');
         const totalCountDisplay = document.getElementById('total-count');
