@@ -147,31 +147,28 @@
     </div>
 
     <script>
-        // ❗ 캐시 방지 코드가 적용된 URL ❗
-        // 매번 현재 시간을 쿼리 매개변수로 추가하여 항상 최신 데이터를 요청합니다.
+        // 캐시 방지 코드가 적용된 URL
         const BASE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
-        const CSV_URL = BASE_CSV_URL + '&t=' + new Date().getTime();
-
         const searchInput = document.getElementById('search');
         const tbody = document.getElementById('data-list-body');
         const totalCountDisplay = document.getElementById('total-count');
 
         // 함수: 목록의 개수를 세고 표시합니다.
         function updateCount(items, totalItems) {
-            // 보이는(hidden 클래스가 없는) 아이템만 필터링하여 개수를 셉니다.
             const visibleItems = Array.from(items).filter(item => !item.classList.contains('hidden'));
             
             if (visibleItems.length === totalItems) {
-                // 검색 결과와 전체 개수가 같을 경우 (검색 안 했을 때)
                 totalCountDisplay.textContent = `총 시그니처 개수: ${totalItems}개`;
             } else {
-                // 검색 중일 경우
                 totalCountDisplay.textContent = `검색 결과: ${visibleItems.length}개 / 전체: ${totalItems}개`;
             }
         }
 
         // 함수: 데이터를 가져오고 테이블을 렌더링하며 검색 리스너를 붙입니다.
         function fetchDataAndRenderTable() {
+            // 접속할 때마다 최신 시간을 붙여 캐시 방지
+            const CSV_URL = BASE_CSV_URL + '&t=' + new Date().getTime();
+
             fetch(CSV_URL)
                 .then(response => {
                     if (!response.ok) {
@@ -183,33 +180,45 @@
                     const rows = csvText.trim().split('\n');
                     rows.shift(); // 헤더 행 ("번호","시그니처 제목") 제거
 
-                    // tbody 내용을 비웁니다.
-                    tbody.innerHTML = '';
+                    let data = [];
                     let totalItems = 0;
-                    const fragment = document.createDocumentFragment();
 
                     rows.forEach(row => {
-                        // 간단한 CSV 파싱 (2열만 있다고 가정)
                         const columns = row.split(','); 
                         if (columns.length >= 2) {
                             let number = columns[0].trim().replace(/"/g, '');
-                            // 두 번째 열부터 끝까지 제목으로 간주하고, 주변의 따옴표를 제거합니다.
                             let title = columns.slice(1).join(',').trim().replace(/^"|"$/g, '');
 
-                            // 데이터가 없거나, '번호' 헤더 등 이상한 데이터는 건너뜁니다.
                             if (!number || !title || number === '번호' || title === '시그니처 제목' || row.trim() === '') {
                                 return;
                             }
-
-                            const tr = document.createElement('tr');
-                            tr.classList.add('item');
-                            tr.innerHTML = `
-                                <td class="number-col">${number}</td>
-                                <td>${title}</td>
-                            `;
-                            fragment.appendChild(tr);
+                            
+                            // 데이터를 임시 배열에 저장합니다.
+                            data.push({ number: number, title: title });
                             totalItems++;
                         }
+                    });
+
+                    // ❗ 새로운 정렬 로직 적용 ❗
+                    // number 필드를 숫자로 변환하여 오름차순 정렬합니다.
+                    data.sort((a, b) => {
+                        const numA = parseInt(a.number.replace(/\D/g, ''), 10); // 숫자 외 문자 제거 후 변환
+                        const numB = parseInt(b.number.replace(/\D/g, ''), 10);
+                        return numA - numB;
+                    });
+                    
+                    // 정렬된 데이터를 기반으로 HTML 조각(Fragment)을 생성합니다.
+                    tbody.innerHTML = '';
+                    const fragment = document.createDocumentFragment();
+
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.classList.add('item');
+                        tr.innerHTML = `
+                            <td class="number-col">${item.number}</td>
+                            <td>${item.title}</td>
+                        `;
+                        fragment.appendChild(tr);
                     });
 
                     tbody.appendChild(fragment);
@@ -220,14 +229,12 @@
                     searchInput.addEventListener('input', () => {
                         const q = searchInput.value.toLowerCase();
                         items.forEach(item => {
-                            // tr의 모든 텍스트 내용(번호 + 제목)에서 검색
                             if (item.textContent.toLowerCase().includes(q)) {
                                 item.classList.remove('hidden');
                             } else {
                                 item.classList.add('hidden');
                             }
                         });
-                        // 검색 후 개수 업데이트
                         updateCount(items, totalItems);
                     });
 
