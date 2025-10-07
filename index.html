@@ -186,25 +186,34 @@
                     rows.forEach(row => {
                         const columns = row.split(','); 
                         if (columns.length >= 2) {
-                            let number = columns[0].trim().replace(/"/g, '');
+                            let numberString = columns[0].trim().replace(/"/g, '');
                             let title = columns.slice(1).join(',').trim().replace(/^"|"$/g, '');
 
-                            if (!number || !title || number === '번호' || title === '시그니처 제목' || row.trim() === '') {
+                            if (!numberString || !title || numberString === '번호' || title === '시그니처 제목' || row.trim() === '') {
                                 return;
                             }
                             
-                            // 데이터를 임시 배열에 저장합니다.
-                            data.push({ number: number, title: title });
+                            // ❗ 정렬 로직 강화: 표시할 문자열 번호와 정렬에 사용할 숫자 번호를 분리 저장 ❗
+                            // 숫자만 추출하여 정수로 변환합니다. (예: "*1100" -> 1100)
+                            const number = parseInt(numberString.replace(/\D/g, ''), 10);
+                            
+                            data.push({ number: number, title: title, originalNumber: numberString });
                             totalItems++;
                         }
                     });
 
-                    // ❗ 새로운 정렬 로직 적용 ❗
-                    // number 필드를 숫자로 변환하여 오름차순 정렬합니다.
+                    // ❗ 최종 정렬 로직: 다중 조건 정렬 ❗
                     data.sort((a, b) => {
-                        const numA = parseInt(a.number.replace(/\D/g, ''), 10); // 숫자 외 문자 제거 후 변환
-                        const numB = parseInt(b.number.replace(/\D/g, ''), 10);
-                        return numA - numB;
+                        const isAsteriskA = a.originalNumber.startsWith('*');
+                        const isAsteriskB = b.originalNumber.startsWith('*');
+                        
+                        // 1. 별표 유무를 기준으로 정렬 (별표 없는 항목이 앞으로)
+                        if (isAsteriskA !== isAsteriskB) {
+                            return isAsteriskA ? 1 : -1; // A에 * 있으면 뒤로(1), B에 * 없으면 앞으로(-1)
+                        }
+
+                        // 2. 별표 유무가 같다면, 순수한 숫자 값으로 정렬
+                        return a.number - b.number;
                     });
                     
                     // 정렬된 데이터를 기반으로 HTML 조각(Fragment)을 생성합니다.
@@ -215,7 +224,7 @@
                         const tr = document.createElement('tr');
                         tr.classList.add('item');
                         tr.innerHTML = `
-                            <td class="number-col">${item.number}</td>
+                            <td class="number-col">${item.originalNumber}</td>
                             <td>${item.title}</td>
                         `;
                         fragment.appendChild(tr);
