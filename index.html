@@ -56,7 +56,6 @@
             border: 2px solid #ccc;
             border-radius: 8px;
             box-sizing: border-box;
-            /* ❗ 최종 수정된 부분: 내부 텍스트 및 입력값 중앙 정렬 */
             text-align: center; 
         }
         #search:focus {
@@ -154,8 +153,12 @@
     </div>
 
     <script>
-        // ❗❗❗ 최종적으로 확인된 CSV 주소입니다. ❗❗❗
-        const BASE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
+        // ❗❗❗ Google Sheets 원본 주소입니다. ❗❗❗
+        const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
+
+        // ❗❗❗ CORS 오류를 우회하기 위해 프록시 서버를 사용하여 최종 데이터 URL을 만듭니다. ❗❗❗
+        const BASE_CSV_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(GOOGLE_SHEETS_URL);
+        
         const searchInput = document.getElementById('search');
         const tbody = document.getElementById('data-list-body');
         const totalCountDisplay = document.getElementById('total-count');
@@ -171,7 +174,7 @@
         }
 
         function fetchDataAndRenderTable() {
-            // 캐시 방지 타임스탬프만 추가
+            // 캐시 방지 타임스탬프 추가
             const CSV_URL = BASE_CSV_URL + '&t=' + new Date().getTime(); 
 
             fetch(CSV_URL)
@@ -196,4 +199,67 @@
                             let numberString = columns[0].trim().replace(/"/g, ''); 
                             let title = columns[1].trim().replace(/^"|"$/g, '');   
 
-                            if (!numberString || !title || numberString === '개수' || title === '시그니처 제목
+                            if (!numberString || !title || numberString === '개수' || title === '시그니처 제목' || row.trim() === '') {
+                                return;
+                            }
+                            
+                            const number = parseInt(numberString.replace(/\D/g, ''), 10);
+                            
+                            data.push({ number: number, title: title, originalNumber: numberString });
+                            totalItems++;
+                        }
+                    });
+
+                    // 정렬 로직 (별표 항목 맨 아래, 숫자 순서대로)
+                    data.sort((a, b) => {
+                        const isAsteriskA = a.originalNumber.startsWith('*');
+                        const isAsteriskB = b.originalNumber.startsWith('*');
+                        
+                        if (isAsteriskA !== isAsteriskB) {
+                            return isAsteriskA ? 1 : -1;
+                        }
+                        return a.number - b.number;
+                    });
+                    
+                    tbody.innerHTML = '';
+                    const fragment = document.createDocumentFragment();
+
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.classList.add('item');
+                        tr.innerHTML = `
+                            <td class="number-col">${item.originalNumber}</td>
+                            <td class="title-col">${item.title}</td>
+                        `;
+                        fragment.appendChild(tr);
+                    });
+
+                    tbody.appendChild(fragment);
+
+                    const items = document.querySelectorAll('tr.item'); 
+                    
+                    searchInput.addEventListener('input', () => {
+                        const q = searchInput.value.toLowerCase();
+                        items.forEach(item => {
+                            if (item.textContent.toLowerCase().includes(q)) {
+                                item.classList.remove('hidden');
+                            } else {
+                                item.classList.add('hidden');
+                            }
+                        });
+                        updateCount(items, totalItems);
+                    });
+
+                    updateCount(items, totalItems);
+                })
+                .catch(error => {
+                    console.error('데이터를 불러오는 데 실패했습니다:', error);
+                    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color: red; font-weight: bold;">시그니처 목록을 불러오지 못했습니다. Google Sheets 설정 또는 네트워크 오류를 확인해주세요.</td></tr>';
+                    totalCountDisplay.textContent = `목록 불러오기 실패`;
+                });
+        }
+
+        fetchDataAndRenderTable();
+    </script>
+</body>
+</html>
