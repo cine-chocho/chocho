@@ -7,7 +7,7 @@
         /* 전체 페이지 스타일: 찐한 분홍색 배경 */
         body {
             font-family: 'Malgun Gothic', '맑은 고딕', 'Apple SD Gothic Neo', sans-serif;
-            background-color: #e91e63; /* 찐한 분홍색 배경 */
+            background-color: #e91e63;
             color: #333;
             margin: 0;
             padding: 0;
@@ -26,16 +26,16 @@
         #header {
             text-align: center;
             padding: 20px 0;
-            background-color: #ffcdd2; /* 헤더 부분만 연한 분홍색 */
+            background-color: #ffcdd2;
             color: #333;
             border-bottom: 5px solid #e91e63;
         }
         #header img {
             display: block;
-            width: 150px; /* 이미지 크기 조절 */
+            width: 150px;
             height: 150px;
             object-fit: cover;
-            border-radius: 50%; /* 이미지를 원형으로 만듦 */
+            border-radius: 50%;
             border: 5px solid #ffffff;
             margin: 0 auto 10px auto;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -43,7 +43,7 @@
         #header h1 {
             font-size: 32px;
             margin: 5px 0 0 0;
-            color: #333; /* CHOCHO 제목 색상 */
+            color: #333;
             text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
         }
 
@@ -65,8 +65,8 @@
         /* 목록 컨테이너 스타일 */
         #list {
             padding: 0 20px 0 20px;
-            max-height: 450px; /* 목록이 보일 최대 높이 */
-            overflow-y: auto;   /* 높이를 넘어가면 세로 스크롤 생성 */
+            max-height: 450px;
+            overflow-y: auto;
         }
 
         /* 테이블 스타일 */
@@ -79,8 +79,8 @@
             overflow: hidden;
         }
         th, td {
-            padding: 12px 10px; /* 패딩 조정 */
-            text-align: center; /* 모든 셀 내용 가운데 정렬 유지 */
+            padding: 12px 10px;
+            text-align: center;
         }
         th {
             background-color: #f4f4f4;
@@ -99,20 +99,20 @@
         
         /* 개수와 제목 열 너비 30% : 70% */
         .number-col {
-            width: 30%; /* 개수 열 너비 30% */
+            width: 30%;
             font-weight: bold;
             color: #e91e63;
         }
         .title-col {
-            width: 70%; /* 제목 열 너비 70% */
+            width: 70%;
         }
 
         /* 총 개수 표시 스타일 */
         #total-count {
             text-align: center;
             padding: 15px 20px;
-            background-color: #ffcdd2; /* 연한 분홍색 배경 */
-            color: #e91e63; /* 찐한 분홍색 글씨 */
+            background-color: #ffcdd2;
+            color: #e91e63;
             font-weight: bold;
             border-top: 5px solid #e91e63;
             font-size: 18px;
@@ -140,7 +140,7 @@
                     <tr>
                         <th class="number-col">개수</th> 
                         <th class="title-col">시그니처 제목</th> 
-                        </tr>
+                    </tr>
                 </thead>
                 <tbody id="data-list-body">
                     <tr><td colspan="2" style="text-align:center;">시그니처 목록을 불러오는 중...</td></tr>
@@ -152,7 +152,7 @@
     </div>
 
     <script>
-        // ❗❗❗ 당신이 제공한 완벽한 CSV 주소를 그대로 사용합니다. ❗❗❗
+        // ❗❗❗ 완벽한 CSV 주소를 적용했습니다. ❗❗❗
         const BASE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
         const searchInput = document.getElementById('search');
         const tbody = document.getElementById('data-list-body');
@@ -189,6 +189,7 @@
 
                     rows.forEach(row => {
                         // 데이터 파싱: A열(개수), B열(제목)만 사용
+                        // C열(영상)은 자동으로 무시됩니다.
                         const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
                         
                         if (columns.length >= 2) {
@@ -240,4 +241,22 @@
                             if (item.textContent.toLowerCase().includes(q)) {
                                 item.classList.remove('hidden');
                             } else {
-                                item.classList.add
+                                item.classList.add('hidden');
+                            }
+                        });
+                        updateCount(items, totalItems);
+                    });
+
+                    updateCount(items, totalItems);
+                })
+                .catch(error => {
+                    console.error('데이터를 불러오는 데 실패했습니다:', error);
+                    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color: red; font-weight: bold;">시그니처 목록을 불러오지 못했습니다. Google Sheet 설정을 확인해주세요.</td></tr>';
+                    totalCountDisplay.textContent = `목록 불러오기 실패`;
+                });
+        }
+
+        fetchDataAndRenderTable();
+    </script>
+</body>
+</html>
