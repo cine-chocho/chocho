@@ -56,7 +56,6 @@
             border: 2px solid #ccc;
             border-radius: 8px;
             box-sizing: border-box;
-            text-align: center; 
         }
         #search:focus {
             border-color: #e91e63;
@@ -153,12 +152,8 @@
     </div>
 
     <script>
-        // ❗❗❗ Google Sheets 원본 주소입니다. ❗❗❗
-        const GOOGLE_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
-
-        // ❗❗❗ CORS 오류를 우회하기 위해 프록시 서버를 사용하여 최종 데이터 URL을 만듭니다. ❗❗❗
-        const BASE_CSV_URL = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(GOOGLE_SHEETS_URL);
-        
+        // ❗❗❗ 완벽한 CSV 주소를 적용했습니다. ❗❗❗
+        const BASE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
         const searchInput = document.getElementById('search');
         const tbody = document.getElementById('data-list-body');
         const totalCountDisplay = document.getElementById('total-count');
@@ -174,12 +169,13 @@
         }
 
         function fetchDataAndRenderTable() {
-            // 캐시 방지 타임스탬프 추가
+            // 캐시 방지 타임스탬프만 추가
             const CSV_URL = BASE_CSV_URL + '&t=' + new Date().getTime(); 
 
             fetch(CSV_URL)
                 .then(response => {
                     if (!response.ok) {
+                        // HTTP 응답이 200 OK가 아닐 경우 에러 발생
                         throw new Error('Network response was not ok: ' + response.statusText);
                     }
                     return response.text();
@@ -193,6 +189,7 @@
 
                     rows.forEach(row => {
                         // 데이터 파싱: A열(개수), B열(제목)만 사용
+                        // C열(영상)은 자동으로 무시됩니다.
                         const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
                         
                         if (columns.length >= 2) {
@@ -254,7 +251,7 @@
                 })
                 .catch(error => {
                     console.error('데이터를 불러오는 데 실패했습니다:', error);
-                    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color: red; font-weight: bold;">시그니처 목록을 불러오지 못했습니다. Google Sheets 설정 또는 네트워크 오류를 확인해주세요.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color: red; font-weight: bold;">시그니처 목록을 불러오지 못했습니다. Google Sheet 설정을 확인해주세요.</td></tr>';
                     totalCountDisplay.textContent = `목록 불러오기 실패`;
                 });
         }
