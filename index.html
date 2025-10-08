@@ -139,4 +139,88 @@
                 <thead>
                     <tr>
                         <th class="number-col">개수</th> 
-                        <th class="title-
+                        <th class="title-col">시그니처 제목</th> 
+                        </tr>
+                </thead>
+                <tbody id="data-list-body">
+                    <tr><td colspan="2" style="text-align:center;">시그니처 목록을 불러오는 중...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="total-count"></div>
+    </div>
+
+    <script>
+        // ❗❗❗ 당신이 제공한 완벽한 CSV 주소를 그대로 사용합니다. ❗❗❗
+        const BASE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
+        const searchInput = document.getElementById('search');
+        const tbody = document.getElementById('data-list-body');
+        const totalCountDisplay = document.getElementById('total-count');
+
+        function updateCount(items, totalItems) {
+            const visibleItems = Array.from(items).filter(item => !item.classList.contains('hidden'));
+            
+            if (visibleItems.length === totalItems) {
+                totalCountDisplay.textContent = `총 시그니처 개수: ${totalItems}개`;
+            } else {
+                totalCountDisplay.textContent = `검색 결과: ${visibleItems.length}개 / 전체: ${totalItems}개`;
+            }
+        }
+
+        function fetchDataAndRenderTable() {
+            // 캐시 방지 타임스탬프만 추가
+            const CSV_URL = BASE_CSV_URL + '&t=' + new Date().getTime(); 
+
+            fetch(CSV_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        // HTTP 응답이 200 OK가 아닐 경우 에러 발생
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(csvText => {
+                    const rows = csvText.trim().split('\n');
+                    rows.shift(); // 헤더 행 제거
+
+                    let data = [];
+                    let totalItems = 0;
+
+                    rows.forEach(row => {
+                        // 데이터 파싱: A열(개수), B열(제목)만 사용
+                        const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); 
+                        
+                        if (columns.length >= 2) {
+                            let numberString = columns[0].trim().replace(/"/g, ''); 
+                            let title = columns[1].trim().replace(/^"|"$/g, '');   
+
+                            if (!numberString || !title || numberString === '개수' || title === '시그니처 제목' || row.trim() === '') {
+                                return;
+                            }
+                            
+                            const number = parseInt(numberString.replace(/\D/g, ''), 10);
+                            
+                            data.push({ number: number, title: title, originalNumber: numberString });
+                            totalItems++;
+                        }
+                    });
+
+                    // 정렬 로직 (별표 항목 맨 아래, 숫자 순서대로)
+                    data.sort((a, b) => {
+                        const isAsteriskA = a.originalNumber.startsWith('*');
+                        const isAsteriskB = b.originalNumber.startsWith('*');
+                        
+                        if (isAsteriskA !== isAsteriskB) {
+                            return isAsteriskA ? 1 : -1;
+                        }
+                        return a.number - b.number;
+                    });
+                    
+                    tbody.innerHTML = '';
+                    const fragment = document.createDocumentFragment();
+
+                    data.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.classList.add('item');
+                        tr.innerHTML = `
