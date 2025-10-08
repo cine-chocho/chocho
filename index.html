@@ -85,4 +85,95 @@
         th {
             background-color: #f4f4f4;
             color: #333;
-            font-size: 1
+            font-size: 15px;
+            border-bottom: 2px solid #ddd;
+        }
+        td {
+            background-color: #ffffff;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        tr:hover td {
+            background-color: #fffafb;
+        }
+        
+        /* ❗ 개수와 제목 열 너비 30% : 70% ❗ */
+        .number-col {
+            width: 30%; /* 개수 열 너비 30% */
+            font-weight: bold;
+            color: #e91e63;
+        }
+        .title-col {
+            width: 70%; /* 제목 열 너비 70% */
+        }
+
+        /* 총 개수 표시 스타일 */
+        #total-count {
+            text-align: center;
+            padding: 15px 20px;
+            background-color: #ffcdd2; /* 연한 분홍색 배경 */
+            color: #e91e63; /* 찐한 분홍색 글씨 */
+            font-weight: bold;
+            border-top: 5px solid #e91e63;
+            font-size: 18px;
+            margin: 0; 
+        }
+
+        /* 숨김 처리된 아이템 */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="header">
+            <img src="ㅍㅍㅍㅍㅍ.webp" alt="초초 이미지">
+            <h1>CHOCHO</h1>
+        </div>
+
+        <input type="text" id="search" placeholder="개수나 단어를 입력하세요 (예시: 큐리슨)">
+
+        <div id="list">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="number-col">개수</th> 
+                        <th class="title-col">시그니처 제목</th> 
+                        </tr>
+                </thead>
+                <tbody id="data-list-body">
+                    <tr><td colspan="2" style="text-align:center;">시그니처 목록을 불러오는 중...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="total-count"></div>
+    </div>
+
+    <script>
+        // ❗❗❗ 이 주소를 반드시 다시 확인하고 필요하면 최신 주소로 교체하세요 ❗❗❗
+        const BASE_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQIgUpfAXlpqjlyYOoGMqpecywiXICRbvrRC0Fxrwq5hSqV4Nj27WeqoNPN0wAEarV9dQo11WWz5QiN/pub?output=csv';
+        const searchInput = document.getElementById('search');
+        const tbody = document.getElementById('data-list-body');
+        const totalCountDisplay = document.getElementById('total-count');
+
+        function updateCount(items, totalItems) {
+            const visibleItems = Array.from(items).filter(item => !item.classList.contains('hidden'));
+            
+            if (visibleItems.length === totalItems) {
+                totalCountDisplay.textContent = `총 시그니처 개수: ${totalItems}개`;
+            } else {
+                totalCountDisplay.textContent = `검색 결과: ${visibleItems.length}개 / 전체: ${totalItems}개`;
+            }
+        }
+
+        function fetchDataAndRenderTable() {
+            const CSV_URL = BASE_CSV_URL + '&t=' + new Date().getTime();
+
+            fetch(CSV_URL)
+                .then(response => {
+                    if (!response.ok) {
+                        // 불러오기 실패 시 에러 콘솔에 표시
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
