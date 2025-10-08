@@ -224,3 +224,20 @@
                         const tr = document.createElement('tr');
                         tr.classList.add('item');
                         tr.innerHTML = `
+                            <td class="number-col">${item.originalNumber}</td>
+                            <td class="title-col">${item.title}</td>
+                        `;
+                        fragment.appendChild(tr);
+                    });
+
+                    tbody.appendChild(fragment);
+
+                    const items = document.querySelectorAll('tr.item'); 
+                    
+                    searchInput.addEventListener('input', () => {
+                        const q = searchInput.value.toLowerCase();
+                        items.forEach(item => {
+                            if (item.textContent.toLowerCase().includes(q)) {
+                                item.classList.remove('hidden');
+                            } else {
+                                item.classList.add
