@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>초초 자신있는 시그 - C9 스타일</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+
+        /* 테이블 컨테이너 */
+        .sig-table-container {
+            width: 90%; /* 표의 너비 조절 */
+            max-width: 800px; /* 최대 너비 설정 */
+            margin: 0 auto; /* 중앙 정렬 */
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden; /* 테두리 둥글게 처리 */
+        }
+
+        /* 타이틀 스타일 */
+        h1 {
+            text-align: center;
+            color: #fff;
+            background-color: #007bff; /* 타이틀 배경색 (C9의 상징색 또는 원하는 색상으로 변경 가능) */
+            padding: 15px 0;
+            margin: 0;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+            border-bottom: 3px solid #0056b3;
+        }
+
+        /* 테이블 스타일 */
+        .sig-table {
+            width: 100%;
+            border-collapse: collapse; /* 셀 경계선 합치기 */
+        }
+
+        /* 테이블 헤더(th) 스타일 */
+        .sig-table th {
+            background-color: #0099ff; /* 헤더 배경색 */
+            color: white;
+            padding: 12px 8px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        /* 테이블 데이터(td) 스타일 */
+        .sig-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+        
+        /* 짝수 행 배경색 (줄무늬 효과) */
+        .sig-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* 마우스 오버 시 행 스타일 */
+        .sig-table tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        /* 닉네임 열 강조 */
+        .sig-table td:nth-child(2) {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* 금액 관련 열 스타일 */
+        .sig-table td:last-child {
+            font-weight: bold;
+            color: #dc3545; /* 빨간색으로 강조 */
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="sig-table-container">
+    <h1>초초 자신있는 시그</h1>
+
+    <table class="sig-table">
+        <thead>
+            <tr>
+                <th>순위</th>
+                <th>닉네임</th>
+                <th>계급</th>
+                <th>별풍선 합계</th>
+                <th>시그 횟수</th>
+                <th>최종 포인트</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>초자신_퀸</td>
+                <td>여왕</td>
+                <td>1,234,567</td>
+                <td>32</td>
+                <td>25,000</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>강력한_공주</td>
+                <td>공주</td>
+                <td>987,654</td>
+                <td>25</td>
+                <td>18,000</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>열정맨</td>
+                <td>기사</td>
+                <td>567,890</td>
+                <td>15</td>
+                <td>10,000</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>도전자_A</td>
+                <td>후보</td>
+                <td>345,678</td>
+                <td>10</td>
+                <td>6,000</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>뉴비_B</td>
+                <td>일반</td>
+                <td>123,456</td>
+                <td>5</td>
+                <td>2,500</td>
+            </tr>
+            </tbody>
+    </table>
+</div>
+
+</body>
+</html>
