@@ -3,145 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>초초 자신있는 시그 - C9 스타일</title>
+    <title>초초 시그 영상 갤러리</title>
     <style>
         /* 기본 스타일 */
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212; /* 어두운 배경 */
+            color: #ffffff;
+            margin: 0;
             padding: 20px;
         }
 
-        /* 테이블 컨테이너 */
-        .sig-table-container {
-            width: 90%; /* 표의 너비 조절 */
-            max-width: 800px; /* 최대 너비 설정 */
-            margin: 0 auto; /* 중앙 정렬 */
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden; /* 테두리 둥글게 처리 */
+        /* 메인 컨테이너 */
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 10px;
         }
 
         /* 타이틀 스타일 */
         h1 {
             text-align: center;
-            color: #fff;
-            background-color: #007bff; /* 타이틀 배경색 (C9의 상징색 또는 원하는 색상으로 변경 가능) */
-            padding: 15px 0;
-            margin: 0;
-            font-size: 1.8em;
-            letter-spacing: 2px;
-            border-bottom: 3px solid #0056b3;
+            color: #f7d247; /* 강조색 (골드/노란색) */
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
         }
 
-        /* 테이블 스타일 */
-        .sig-table {
+        /* 이미지 그리드 (격자) 레이아웃 */
+        .video-grid {
+            display: grid;
+            /* 화면 크기에 따라 열(column) 개수 자동 조절 */
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+            gap: 20px; /* 격자 사이의 간격 */
+        }
+
+        /* 개별 영상 항목 스타일 */
+        .video-item {
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none; /* 링크 밑줄 제거 */
+            color: inherit;
+            display: block;
+        }
+
+        .video-item:hover {
+            transform: translateY(-5px); /* 마우스 오버 시 살짝 위로 이동 */
+            box-shadow: 0 6px 15px rgba(255, 255, 255, 0.2); /* 빛나는 효과 */
+        }
+
+        /* 썸네일 이미지 스타일 */
+        .video-thumbnail {
             width: 100%;
-            border-collapse: collapse; /* 셀 경계선 합치기 */
+            height: auto;
+            display: block;
+            border-bottom: 3px solid #f7d247; /* C9 스타일 테두리 */
         }
 
-        /* 테이블 헤더(th) 스타일 */
-        .sig-table th {
-            background-color: #0099ff; /* 헤더 배경색 */
-            color: white;
-            padding: 12px 8px;
-            font-weight: bold;
+        /* 정보 텍스트 스타일 */
+        .video-info {
+            padding: 10px;
             text-align: center;
-            border: 1px solid #ddd;
         }
 
-        /* 테이블 데이터(td) 스타일 */
-        .sig-table td {
-            padding: 10px 8px;
-            text-align: center;
-            border: 1px solid #ddd;
-            color: #333;
-        }
-        
-        /* 짝수 행 배경색 (줄무늬 효과) */
-        .sig-table tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        /* 마우스 오버 시 행 스타일 */
-        .sig-table tr:hover {
-            background-color: #e9ecef;
-        }
-        
-        /* 닉네임 열 강조 */
-        .sig-table td:nth-child(2) {
+        .video-number {
+            font-size: 1.2em;
             font-weight: bold;
-            color: #007bff;
+            color: #0099ff; /* 시그 번호 강조색 */
+            margin-bottom: 5px;
         }
 
-        /* 금액 관련 열 스타일 */
-        .sig-table td:last-child {
-            font-weight: bold;
-            color: #dc3545; /* 빨간색으로 강조 */
+        .video-title {
+            font-size: 0.9em;
+            color: #ccc;
+            white-space: nowrap; /* 줄바꿈 방지 */
+            overflow: hidden;
+            text-overflow: ellipsis; /* 넘치는 텍스트 ... 처리 */
         }
-
     </style>
 </head>
 <body>
 
-<div class="sig-table-container">
-    <h1>초초 자신있는 시그</h1>
+<div class="gallery-container">
+    <h1>초초 시그 영상</h1>
+    
+    <div class="video-grid">
+        
+        <a href="영상링크주소1" target="_blank" class="video-item">
+            <img src="https://via.placeholder.com/200x120?text=1212+진짜해" alt="진짜해 썸네일" class="video-thumbnail">
+            <div class="video-info">
+                <div class="video-number">1212</div>
+                <div class="video-title">진짜해</div>
+            </div>
+        </a>
+        
+        <a href="영상링크주소2" target="_blank" class="video-item">
+            <img src="https://via.placeholder.com/200x120?text=1332+마그네틱" alt="마그네틱 썸네일" class="video-thumbnail">
+            <div class="video-info">
+                <div class="video-number">1332</div>
+                <div class="video-title">마그네틱</div>
+            </div>
+        </a>
 
-    <table class="sig-table">
-        <thead>
-            <tr>
-                <th>순위</th>
-                <th>닉네임</th>
-                <th>계급</th>
-                <th>별풍선 합계</th>
-                <th>시그 횟수</th>
-                <th>최종 포인트</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>초자신_퀸</td>
-                <td>여왕</td>
-                <td>1,234,567</td>
-                <td>32</td>
-                <td>25,000</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>강력한_공주</td>
-                <td>공주</td>
-                <td>987,654</td>
-                <td>25</td>
-                <td>18,000</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>열정맨</td>
-                <td>기사</td>
-                <td>567,890</td>
-                <td>15</td>
-                <td>10,000</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>도전자_A</td>
-                <td>후보</td>
-                <td>345,678</td>
-                <td>10</td>
-                <td>6,000</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>뉴비_B</td>
-                <td>일반</td>
-                <td>123,456</td>
-                <td>5</td>
-                <td>2,500</td>
-            </tr>
-            </tbody>
-    </table>
+        <a href="영상링크주소3" target="_blank" class="video-item">
+            <img src="https://via.placeholder.com/200x120?text=1500+바빠" alt="바빠 썸네일" class="video-thumbnail">
+            <div class="video-info">
+                <div class="video-number">1500</div>
+                <div class="video-title">바빠</div>
+            </div>
+        </a>
+        
+        <a href="영상링크주소4" target="_blank" class="video-item">
+            <img src="https://via.placeholder.com/200x120?text=1717+불도저" alt="불도저 썸네일" class="video-thumbnail">
+            <div class="video-info">
+                <div class="video-number">1717</div>
+                <div class="video-title">불도저</div>
+            </div>
+        </a>
+        
+        </div>
 </div>
 
 </body>
